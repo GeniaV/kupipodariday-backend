@@ -14,8 +14,16 @@ export class UsersService {
     private hashServise: HashService,
   ) {}
 
-  async findMany(): Promise<User[]> {
-    return this.usersRepository.find();
+  async findMany(query: { [key: string]: string }): Promise<User[]> {
+    const users = await this.usersRepository.find();
+    const user = users.filter((user) => {
+      if (user.username === query.username || user.email === query.email) {
+        delete user.password;
+        return user;
+      }
+      return;
+    });
+    return user;
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {

@@ -15,7 +15,6 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/types/types';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
 import { UsersService } from './users.service';
 
 @UseGuards(JwtGuard)
@@ -23,14 +22,25 @@ import { UsersService } from './users.service';
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
-  @Get()
-  findAll(): Promise<User[]> {
-    return this.usersService.findMany();
-  }
-
   @Get('me')
   getUser(@Req() req: RequestWithUser) {
     return req.user;
+  }
+
+  @Get(':username')
+  async getUserbyName(@Param('username') username: string) {
+    const user = await this.usersService.findByUsername(username);
+    if (!user) {
+      throw new NotFoundException();
+    }
+    delete user.password;
+    delete user.email;
+    return user;
+  }
+
+  @Post('find')
+  async findUserByEmailOrUserName(@Body() query: { [key: string]: string }) {
+    return await this.usersService.findMany(query);
   }
 
   @Post()
