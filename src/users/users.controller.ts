@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Header,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -14,6 +15,7 @@ import {
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/types/types';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindUsersDto } from './dto/find-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
@@ -39,8 +41,15 @@ export class UsersController {
   }
 
   @Post('find')
-  async findUserByEmailOrUserName(@Body() query: { [key: string]: string }) {
-    return await this.usersService.findMany(query);
+  @Header('Content-Type', 'application/json')
+  async findUserByEmailOrUserName(@Body() findUserDto: FindUsersDto) {
+    const { query } = findUserDto;
+    const user = await this.usersService.findMany(query);
+    if (!user) {
+      return;
+    }
+    delete user[0].password;
+    return user;
   }
 
   @Post()
