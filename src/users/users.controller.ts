@@ -65,12 +65,12 @@ export class UsersController {
     return this.usersService.updateOne(req.user.id, updateUserDto);
   }
 
-  @Delete(':id')
-  async removeById(@Param('id', ParseIntPipe) id: number) {
-    const user = await this.usersService.findOne({ where: { id } });
-    if (!user) {
-      throw new NotFoundException();
-    }
-    await this.usersService.removeOne(id);
-  }
+  // @Delete(':id')
+  // async removeById(@Param('id', ParseIntPipe) id: number) {
+  //   const user = await this.usersService.findOne({ where: { id } });
+  //   if (!user) {
+  //     throw new NotFoundException();
+  //   }
+  //   await this.usersService.removeOne(id);
+  // }
 }
