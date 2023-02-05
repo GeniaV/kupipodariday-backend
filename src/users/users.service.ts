@@ -60,7 +60,22 @@ export class UsersService {
     return this.usersRepository.update({ id }, updateUserDto);
   }
 
-  async removeOne(id: number) {
-    return this.usersRepository.delete({ id });
+  async getUserWishes(id: number) {
+    const user = await this.findOne({
+      where: { id: id },
+      relations: {
+        wishes: { owner: true },
+        offers: true,
+      },
+    });
+
+    const userWishes = user.wishes.filter((wish) => {
+      delete wish.owner.password;
+      delete wish.owner.email;
+      wish.price = Number(wish.price);
+      return wish;
+    });
+
+    return userWishes;
   }
 }

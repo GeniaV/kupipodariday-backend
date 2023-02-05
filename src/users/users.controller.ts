@@ -1,12 +1,10 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Header,
   NotFoundException,
   Param,
-  ParseIntPipe,
   Patch,
   Post,
   Req,
@@ -40,6 +38,12 @@ export class UsersController {
     return user;
   }
 
+  @Get('me/wishes')
+  @Header('Content-Type', 'application/json')
+  async getOwnWishes(@Req() req: RequestWithUser) {
+    return this.usersService.getUserWishes(req.user.id);
+  }
+
   @Post('find')
   @Header('Content-Type', 'application/json')
   async findUserByEmailOrUserName(@Body() findUserDto: FindUsersDto) {
@@ -64,13 +68,4 @@ export class UsersController {
   ) {
     return this.usersService.updateOne(req.user.id, updateUserDto);
   }
-
-  // @Delete(':id')
-  // async removeById(@Param('id', ParseIntPipe) id: number) {
-  //   const user = await this.usersService.findOne({ where: { id } });
-  //   if (!user) {
-  //     throw new NotFoundException();
-  //   }
-  //   await this.usersService.removeOne(id);
-  // }
 }
