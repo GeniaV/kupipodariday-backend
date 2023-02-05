@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
 import { Wish } from './entities/wish.entity';
 
@@ -20,5 +20,9 @@ export class WishesService {
       owner: owner,
     });
     return this.wishesRepository.save(newWish);
+  }
+
+  async findOne(query: FindOneOptions<Wish>): Promise<Wish> {
+    return this.wishesRepository.findOne(query);
   }
 }

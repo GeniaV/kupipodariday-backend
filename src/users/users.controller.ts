@@ -44,6 +44,13 @@ export class UsersController {
     return this.usersService.getUserWishes(req.user.id);
   }
 
+  @Get(':username/wishes')
+  @Header('Content-Type', 'application/json')
+  async getWishesByUsername(@Param('username') username: string) {
+    const user = await this.getUserbyName(username);
+    return this.usersService.getUserWishes(user.id);
+  }
+
   @Post('find')
   @Header('Content-Type', 'application/json')
   async findUserByEmailOrUserName(@Body() findUserDto: FindUsersDto) {

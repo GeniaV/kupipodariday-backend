@@ -64,8 +64,13 @@ export class UsersService {
     const user = await this.findOne({
       where: { id: id },
       relations: {
-        wishes: { owner: true },
-        offers: true,
+        wishes: {
+          owner: true,
+          offers: {
+            item: { owner: true, offers: true },
+            user: { wishes: true, offers: true, wishlists: true },
+          },
+        },
       },
     });
 
