@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
+  Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Req,
@@ -30,5 +33,17 @@ export class WishesController {
     @Param('id') id: string,
   ) {
     return this.wishesService.updateOne(updateWishDto, id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Get(':id')
+  getWishById(@Param('id') id: number) {
+    return this.wishesService.getWishById(id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.wishesService.delete(id);
   }
 }

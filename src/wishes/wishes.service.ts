@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
@@ -33,5 +33,44 @@ export class WishesService {
 
   async updateOne(updateWishDto: UpdateWishDto, id: string) {
     await this.wishesRepository.update(id, updateWishDto);
+  }
+
+  async getWishById(id: number) {
+    const wish = await this.wishesRepository.findOne({
+      where: [{ id: id }],
+      relations: {
+        owner: true,
+        offers: {
+          item: true,
+          user: { offers: true, wishes: true, wishlists: true },
+        },
+      },
+    });
+    if (!wish) {
+      throw new NotFoundException();
+    }
+    return wish;
+  }
+
+  removeById(id: number) {
+    return this.wishesRepository.delete({ id });
+  }
+
+  async delete(id: number) {
+    const wish = await this.findOne({
+      where: { id: id },
+      relations: {
+        owner: true,
+        offers: {
+          item: true,
+          user: { offers: true, wishes: true, wishlists: true },
+        },
+      },
+    });
+    if (!wish) {
+      throw new NotFoundException();
+    }
+    await this.removeById(id);
+    return wish;
   }
 }
