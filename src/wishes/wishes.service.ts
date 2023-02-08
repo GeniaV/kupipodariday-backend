@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { CreateWishDto } from './dto/create-wish.dto';
+import { UpdateWishDto } from './dto/update-widh.dto';
 import { Wish } from './entities/wish.entity';
 
 @Injectable()
@@ -28,5 +29,9 @@ export class WishesService {
 
   async findOne(query: FindOneOptions<Wish>): Promise<Wish> {
     return this.wishesRepository.findOne(query);
+  }
+
+  async updateOne(updateWishDto: UpdateWishDto, id: string) {
+    await this.wishesRepository.update(id, updateWishDto);
   }
 }
