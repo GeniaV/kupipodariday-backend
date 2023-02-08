@@ -3,11 +3,12 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import { Header, Patch } from '@nestjs/common/decorators';
+import { Delete, Header, Patch } from '@nestjs/common/decorators';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { RequestWithUser } from 'src/types/types';
 import { CreateWishListDto } from './dto/create-wishList.dto';
@@ -46,5 +47,11 @@ export class WishlistsController {
     @Param('id') id: string,
   ) {
     return this.wishlistsService.updateOne(updateWishListDto, id);
+  }
+
+  @UseGuards(JwtGuard)
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.wishlistsService.delete(id);
   }
 }
