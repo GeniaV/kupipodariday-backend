@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { HashService } from 'src/hash/hash.service';
 import { FindOneOptions, Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
+import { FindUsersDto } from './dto/find-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 
@@ -90,5 +91,15 @@ export class UsersService {
     });
 
     return userWishes;
+  }
+
+  async findUserByEmailOrUserName(findUserDto: FindUsersDto) {
+    const { query } = findUserDto;
+    const user = await this.findMany(query);
+    if (!user) {
+      return;
+    }
+    delete user[0].password;
+    return user;
   }
 }
