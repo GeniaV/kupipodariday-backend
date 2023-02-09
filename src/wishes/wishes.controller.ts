@@ -21,6 +21,18 @@ export class WishesController {
   constructor(private wishesService: WishesService) {}
 
   @UseGuards(JwtGuard)
+  @Get('last')
+  getLastWishes() {
+    return this.wishesService.getLastWishes();
+  }
+
+  @UseGuards(JwtGuard)
+  @Get(':id')
+  getWishById(@Param('id') id: number) {
+    return this.wishesService.getWishById(id);
+  }
+
+  @UseGuards(JwtGuard)
   @Post()
   create(@Body() createWishDto: CreateWishDto, @Req() req: RequestWithUser) {
     return this.wishesService.create(req.user, createWishDto);
@@ -33,12 +45,6 @@ export class WishesController {
     @Param('id') id: string,
   ) {
     return this.wishesService.updateOne(updateWishDto, id);
-  }
-
-  @UseGuards(JwtGuard)
-  @Get(':id')
-  getWishById(@Param('id') id: number) {
-    return this.wishesService.getWishById(id);
   }
 
   @UseGuards(JwtGuard)

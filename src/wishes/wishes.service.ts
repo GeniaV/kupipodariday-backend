@@ -73,4 +73,25 @@ export class WishesService {
     await this.removeById(id);
     return wish;
   }
+
+  async findLast() {
+    const wishes = await this.wishesRepository.find({
+      relations: {
+        owner: true,
+        offers: {
+          item: true,
+          user: { offers: true, wishes: true, wishlists: true },
+        },
+      },
+      order: {
+        createdAt: 'DESC',
+      },
+      take: 40,
+    });
+    return wishes;
+  }
+
+  async getLastWishes() {
+    return await this.findLast();
+  }
 }
