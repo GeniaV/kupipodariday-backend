@@ -50,12 +50,16 @@ export class WishesController {
   async updateWishlistlists(
     @Body() updateWishDto: UpdateWishDto,
     @Param('id') id: string,
+    @Req() req: RequestWithUser,
   ) {
-    return this.wishesService.updateOne(updateWishDto, id);
+    return this.wishesService.updateOne(updateWishDto, id, req.user.id);
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    return this.wishesService.delete(id);
+  async delete(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: RequestWithUser,
+  ) {
+    return this.wishesService.delete(id, req.user.id);
   }
 }

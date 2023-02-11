@@ -1,4 +1,5 @@
 import {
+  IsNumber,
   IsPositive,
   IsString,
   IsUrl,
@@ -26,6 +27,7 @@ export class CreateWishDto {
   image: string;
 
   @Min(1)
+  @IsNumber()
   @IsPositive()
   price: number;
 

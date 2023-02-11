@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { WishesService } from 'src/wishes/wishes.service';
@@ -36,7 +40,7 @@ export class WishlistsService {
     const wishlist = await this.wishListsRepository.findOne({
       where: [{ id: +id }],
       relations: {
-        items: true,
+        items: { offers: true },
         owner: true,
       },
     });
@@ -44,6 +48,14 @@ export class WishlistsService {
     if (!wishlist) {
       throw new NotFoundException();
     }
+
+    wishlist.items.forEach((item) => {
+      const amounts = item.offers.map((offer) => Number(offer.amount));
+      item.raised = amounts.reduce(function (acc, val) {
+        return acc + val;
+      }, 0);
+    });
+
     return wishlist;
   }
 
@@ -66,7 +78,23 @@ export class WishlistsService {
     return this.wishListsRepository.save(newWishList);
   }
 
-  async updateOne(updateWishListDto: UpdateWishListDto, id: string) {
+  async updateOne(
+    updateWishListDto: UpdateWishListDto,
+    id: string,
+    userId: number,
+  ) {
+    const wishList = await this.findOne({
+      where: { id: +id },
+      relations: {
+        owner: true,
+        items: true,
+      },
+    });
+
+    if (wishList.owner.id !== userId) {
+      throw new ForbiddenException('Нельзя редактировать чужие подборки');
+    }
+
     await this.wishListsRepository.update(id, updateWishListDto);
     const updatedWishList = await this.findOne({
       where: { id: +id },
@@ -82,7 +110,7 @@ export class WishlistsService {
     return this.wishListsRepository.delete({ id });
   }
 
-  async delete(id: number) {
+  async delete(id: number, userId: number) {
     const wishList = await this.findOne({
       where: { id: id },
       relations: {
@@ -92,6 +120,10 @@ export class WishlistsService {
     });
     if (!wishList) {
       throw new NotFoundException();
+    }
+
+    if (userId !== wishList.owner.id) {
+      throw new ForbiddenException('Нельзя удалять чужие подборки');
     }
     await this.removeById(id);
     return wishList;
