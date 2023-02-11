@@ -52,6 +52,11 @@ export class OffersService {
       return this.offersRepository.save(newOffer);
     }
 
+    delete newOffer.user.password;
+    delete newOffer.user.email;
+    delete newOffer.item.owner.password;
+    delete newOffer.item.owner.email;
+
     return this.offersRepository.save(newOffer);
   }
 
@@ -78,7 +83,9 @@ export class OffersService {
     offersArr.forEach((offer) => {
       offer.amount = Number(offer.amount);
       offer.item.price = Number(offer.item.price);
-      offer.user.wishes.forEach((wish) => (wish.price = Number(wish.price)));
+      delete offer.item.owner.password;
+      delete offer.item.owner.email;
+      offer.user?.wishes.forEach((wish) => (wish.price = Number(wish.price)));
     });
 
     return offersArr;
@@ -97,7 +104,8 @@ export class OffersService {
     }
 
     offer.amount = Number(offer.amount);
-
+    delete offer.item.owner.password;
+    delete offer.item.owner.email;
     offer.item.price = Number(offer.item.price);
 
     return offer;

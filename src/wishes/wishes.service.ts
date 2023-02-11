@@ -79,6 +79,9 @@ export class WishesService {
       return acc + val;
     }, 0);
 
+    delete wish.owner.password;
+    delete wish.owner.email;
+
     return wish;
   }
 
@@ -105,6 +108,8 @@ export class WishesService {
       throw new ForbiddenException('Удаление чужих подарков невозможно');
     }
     await this.removeById(id);
+    delete wish.owner.password;
+    delete wish.owner.email;
     return wish;
   }
 
@@ -128,6 +133,9 @@ export class WishesService {
       wish.raised = amounts.reduce(function (acc, val) {
         return acc + val;
       }, 0);
+
+      delete wish.owner.password;
+      delete wish.owner.email;
     });
 
     return wishes;
@@ -160,6 +168,9 @@ export class WishesService {
       wish.raised = amounts.reduce(function (acc, val) {
         return acc + val;
       }, 0);
+
+      delete wish.owner.password;
+      delete wish.owner.email;
     });
 
     return copiedWishes;

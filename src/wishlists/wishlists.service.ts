@@ -28,12 +28,19 @@ export class WishlistsService {
   }
 
   async getWishlists() {
-    return await this.findMany({
+    const wishLists = await this.findMany({
       relations: {
         owner: true,
         items: true,
       },
     });
+
+    wishLists.forEach((wishList) => {
+      delete wishList.owner.password;
+      delete wishList.owner.email;
+    });
+
+    return wishLists;
   }
 
   async getWishlistsById(id: string) {
@@ -55,6 +62,9 @@ export class WishlistsService {
         return acc + val;
       }, 0);
     });
+
+    delete wishlist.owner.password;
+    delete wishlist.owner.email;
 
     return wishlist;
   }
@@ -103,6 +113,9 @@ export class WishlistsService {
         items: true,
       },
     });
+
+    delete updatedWishList.owner.password;
+    delete updatedWishList.owner.email;
     return updatedWishList;
   }
 
@@ -126,6 +139,10 @@ export class WishlistsService {
       throw new ForbiddenException('Нельзя удалять чужие подборки');
     }
     await this.removeById(id);
+
+    delete wishList.owner.password;
+    delete wishList.owner.email;
+
     return wishList;
   }
 }
