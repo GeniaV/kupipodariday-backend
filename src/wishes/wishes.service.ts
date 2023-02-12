@@ -152,7 +152,7 @@ export class WishesService {
       order: {
         copied: 'DESC',
       },
-      take: 20,
+      take: 10,
     });
 
     const copiedWishes = wishes.filter((wish) => {
