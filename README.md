@@ -6,7 +6,7 @@
 
 **STACK**
 
-Typescript, PostgreSQL, TypeORM, Nest.js (среда выполения).
+Typescript, PostgreSQL, TypeORM, NestJS, Node.js (среда выполения).
 
 **ОПИСАНИЕ**
 
